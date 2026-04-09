@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//usr/local/bin/**)",
+      "Bash(source ~/.nvm/nvm.sh)",
+      "Bash(echo $PATH)",
+      "Read(//Applications/**)"
+    ]
+  }
+}
