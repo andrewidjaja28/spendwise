@@ -4,7 +4,6 @@ import {
   CalendarDays,
   Upload,
   Settings,
-  DollarSign,
   Moon,
   Sun,
   Share2,
@@ -30,10 +29,7 @@ export function Sidebar() {
       <aside className="hidden md:flex flex-col w-56 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 h-screen sticky top-0">
         {/* Logo */}
         <div className="flex items-center gap-2.5 px-5 py-5 border-b border-slate-200 dark:border-slate-800">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-            <DollarSign size={18} className="text-white" />
-          </div>
-          <span className="font-semibold text-slate-900 dark:text-white">Spendwise</span>
+          <span className="font-mono font-bold text-xl tracking-widest text-slate-900 dark:text-white">STASH</span>
         </div>
 
         {/* Nav */}

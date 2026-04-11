@@ -83,9 +83,9 @@ export function generateMailtoLink(
   shareUrl: string,
   recipientEmail: string
 ): string {
-  const subject = encodeURIComponent('View my spending report — Spendwise')
+  const subject = encodeURIComponent('View my spending report — Stash')
   const body = encodeURIComponent(
-    `Hi,\n\nI'm sharing my spending tracker with you. Click the link below to view:\n\n${shareUrl}\n\nThis is a read-only view — no login needed.\n\n— Sent from Spendwise`
+    `Hi,\n\nI'm sharing my spending tracker with you. Click the link below to view:\n\n${shareUrl}\n\nThis is a read-only view — no login needed.\n\n— Sent from Stash`
   )
   return `mailto:${recipientEmail}?subject=${subject}&body=${body}`
 }

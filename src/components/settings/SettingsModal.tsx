@@ -16,7 +16,7 @@ export function SettingsModal() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `spending-tracker-export-${new Date().toISOString().slice(0, 10)}.json`
+    a.download = `stash-export-${new Date().toISOString().slice(0, 10)}.json`
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -85,7 +85,7 @@ export function SettingsModal() {
         {/* About */}
         <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
           <p className="text-xs text-slate-400 text-center">
-            Spendwise · All data stored locally in your browser · v0.1.0
+            Stash · All data stored locally in your browser · v0.1.0
           </p>
         </div>
       </div>
