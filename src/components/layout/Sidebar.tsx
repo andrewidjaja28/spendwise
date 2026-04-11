@@ -7,11 +7,12 @@ import {
   Moon,
   Sun,
   Share2,
+  type LucideIcon,
 } from 'lucide-react'
 import { useUiStore } from '../../store/uiStore'
 import type { ViewId } from '../../types'
 
-const NAV_ITEMS: { id: ViewId; label: string; icon: React.FC<{ size?: number }>; hideReadOnly?: boolean }[] = [
+const NAV_ITEMS: { id: ViewId; label: string; icon: LucideIcon; hideReadOnly?: boolean }[] = [
   { id: 'dashboard', label: 'Dashboard',  icon: LayoutDashboard },
   { id: 'monthly',   label: 'Monthly',    icon: Calendar },
   { id: 'yearly',    label: 'Yearly',     icon: CalendarDays },

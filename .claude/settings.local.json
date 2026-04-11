@@ -4,7 +4,10 @@
       "Read(//usr/local/bin/**)",
       "Bash(source ~/.nvm/nvm.sh)",
       "Bash(echo $PATH)",
-      "Read(//Applications/**)"
+      "Read(//Applications/**)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)"
     ]
   }
 }

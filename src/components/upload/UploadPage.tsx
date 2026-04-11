@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Upload, FileText, FileType, CheckCircle, AlertCircle, Sparkles } from 'lucide-react'
+import { Upload, FileText, FileType, CheckCircle, AlertCircle, Sparkles, type LucideIcon } from 'lucide-react'
 import { ImportReviewModal } from './ImportReviewModal'
 import { parseCsv } from '../../lib/csvParser'
 import { parsePdf } from '../../lib/pdfParser'
@@ -69,7 +69,7 @@ export function UploadPage() {
     state: UploadZoneState
     setState: React.Dispatch<React.SetStateAction<UploadZoneState>>
     inputRef: React.RefObject<HTMLInputElement>
-    icon: React.FC<{ size?: number; className?: string }>
+    icon: LucideIcon
     iconBg: string
     iconColor: string
     label: string

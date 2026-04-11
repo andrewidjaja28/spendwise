@@ -16,6 +16,8 @@ const merchants: Record<CategoryId, string[]> = {
   utilities: ['Enbridge Gas', 'Toronto Hydro', 'Rogers Internet', 'Bell Mobility'],
   travel: ['Air Canada', 'Airbnb', 'Expedia', 'WestJet'],
   subscriptions: ['Apple One', 'Adobe CC', 'YouTube Premium', 'Amazon Prime'],
+  savings: ['TFSA Contribution', 'HISA Transfer', 'Emergency Fund'],
+  investment: ['Wealthsimple', 'Questrade', 'RRSP Contribution'],
   income: ['Payroll Deposit', 'Freelance Payment', 'E-Transfer'],
   other: ['ATM Withdrawal', 'Bank Fee', 'Misc'],
 }
@@ -37,6 +39,8 @@ const amountRanges: Record<CategoryId, [number, number]> = {
   utilities:      [40, 200],
   travel:         [150, 800],
   subscriptions:  [8, 25],
+  savings:        [200, 1000],
+  investment:     [100, 500],
   income:         [2000, 5000],
   other:          [10, 100],
 }
