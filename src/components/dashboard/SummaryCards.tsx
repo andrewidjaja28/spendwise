@@ -1,6 +1,8 @@
 import { TrendingUp, TrendingDown, DollarSign, Tag } from 'lucide-react'
 import { formatCurrency } from '../../lib/dateUtils'
 import { CATEGORY_MAP } from '../../constants/categories'
+import { useBudgetStore } from '../../store/budgetStore'
+import { useCountUp } from '../../hooks/useCountUp'
 import type { MonthlyData } from '../../types'
 import type { CategoryId } from '../../types'
 
@@ -33,17 +35,24 @@ export function SummaryCards({ current, previous }: SummaryCardsProps) {
     .filter((t) => t.type === 'income')
     .reduce((s, t) => s + t.amount, 0)
 
+  const budgets = useBudgetStore((s) => s.budgets)
+  const totalBudget = Object.values(budgets).reduce((s, v) => s + v, 0)
+  const budgetPct = totalBudget > 0 ? Math.round((current.total / totalBudget) * 100) : null
+
+  const animatedTotal = useCountUp(current.total)
+  const animatedIncome = useCountUp(income)
+
   const cards = [
     {
       title: 'Total Expenses',
-      value: formatCurrency(current.total),
+      value: formatCurrency(animatedTotal),
       sub: momChange !== null
         ? `${momChange >= 0 ? '+' : ''}${momChange.toFixed(1)}% vs last month`
         : 'This month',
       icon: DollarSign,
       trend: momChange !== null ? (momChange > 0 ? 'up' : 'down') : 'neutral',
-      iconBg: 'bg-blue-100 dark:bg-blue-900/30',
-      iconColor: 'text-blue-600 dark:text-blue-400',
+      iconBg: 'bg-emerald-100 dark:bg-emerald-900/30',
+      iconColor: 'text-emerald-600 dark:text-emerald-400',
     },
     {
       title: 'Daily Average',
@@ -67,7 +76,7 @@ export function SummaryCards({ current, previous }: SummaryCardsProps) {
     },
     {
       title: 'Income',
-      value: income > 0 ? formatCurrency(income) : '—',
+      value: income > 0 ? formatCurrency(animatedIncome) : '—',
       sub: income > 0 ? `Net: ${formatCurrency(income - current.total)}` : 'None recorded',
       icon: TrendingUp,
       trend: 'neutral' as const,
@@ -79,7 +88,7 @@ export function SummaryCards({ current, previous }: SummaryCardsProps) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {cards.map((card) => (
-        <div key={card.title} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5">
+        <div key={card.title} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
           <div className="flex items-start justify-between mb-3">
             <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">{card.title}</p>
             <div
@@ -89,12 +98,25 @@ export function SummaryCards({ current, previous }: SummaryCardsProps) {
               <card.icon size={16} className={card.iconColor} style={card.iconStyle} />
             </div>
           </div>
-          <p className="text-xl font-bold text-slate-900 dark:text-white leading-tight">{card.value}</p>
-          <p className={`text-xs mt-1 ${
-            card.trend === 'up' ? 'text-red-500' : card.trend === 'down' ? 'text-green-500' : 'text-slate-400 dark:text-slate-500'
+          <p className={`${card.title === 'Total Expenses' || card.title === 'Income' ? 'text-2xl md:text-3xl' : 'text-xl'} font-mono font-bold text-slate-900 dark:text-white leading-tight`}>{card.value}</p>
+          <p className={`text-xs font-mono mt-1 ${
+            card.trend === 'up' ? 'text-rose-500' : card.trend === 'down' ? 'text-green-500' : 'text-slate-400 dark:text-slate-500'
           }`}>
             {card.sub}
           </p>
+          {card.title === 'Total Expenses' && budgetPct !== null && (
+            <div className="mt-2">
+              <div className="h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all ${
+                    budgetPct > 100 ? 'bg-rose-500' : budgetPct >= 75 ? 'bg-amber-500' : 'bg-green-500'
+                  }`}
+                  style={{ width: `${Math.min(budgetPct, 100)}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-slate-400 mt-0.5">{budgetPct}% of budget</p>
+            </div>
+          )}
         </div>
       ))}
     </div>

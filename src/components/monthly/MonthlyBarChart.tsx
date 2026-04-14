@@ -8,7 +8,8 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts'
-import { CATEGORIES } from '../../constants/categories'
+import { ChartTooltip } from '../shared/ChartTooltip'
+import { useCategoryStore } from '../../store/categoryStore'
 import { formatCurrency } from '../../lib/dateUtils'
 import type { MonthlyData } from '../../types'
 
@@ -19,7 +20,9 @@ interface MonthlyBarChartProps {
 }
 
 export function MonthlyBarChart({ data, onCategoryClick, activeCategory }: MonthlyBarChartProps) {
-  const chartData = CATEGORIES
+  const categories = useCategoryStore((s) => s.categories)
+
+  const chartData = categories
     .filter((c) => c.id !== 'income' && data.byCategory[c.id] > 0)
     .map((c) => ({ name: c.label, value: data.byCategory[c.id], id: c.id, color: c.color }))
     .sort((a, b) => b.value - a.value)
@@ -31,7 +34,7 @@ export function MonthlyBarChart({ data, onCategoryClick, activeCategory }: Month
   return (
     <ResponsiveContainer width="100%" height={280}>
       <BarChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 60 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" strokeOpacity={0.5} />
+        <CartesianGrid horizontal vertical={false} strokeOpacity={0.1} />
         <XAxis
           dataKey="name"
           tick={{ fontSize: 12, fill: '#94a3b8' }}
@@ -44,16 +47,9 @@ export function MonthlyBarChart({ data, onCategoryClick, activeCategory }: Month
           tickFormatter={(v) => `$${(v / 1000).toFixed(v >= 1000 ? 1 : 0)}${v >= 1000 ? 'k' : ''}`}
         />
         <Tooltip
-          formatter={(value: number) => [formatCurrency(value), 'Spent']}
-          contentStyle={{
-            backgroundColor: 'var(--tooltip-bg, #1e293b)',
-            border: 'none',
-            borderRadius: '8px',
-            color: '#f1f5f9',
-            fontSize: '13px',
-          }}
+          content={<ChartTooltip formatter={(v) => formatCurrency(v)} />}
         />
-        <Bar dataKey="value" radius={[6, 6, 0, 0]} onClick={(d) => onCategoryClick?.(d.id === activeCategory ? null : d.id)}>
+        <Bar dataKey="value" radius={[2, 2, 0, 0]} animationDuration={800} onClick={(d) => onCategoryClick?.(d.id === activeCategory ? null : d.id)}>
           {chartData.map((entry) => (
             <Cell
               key={entry.id}

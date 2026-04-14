@@ -8,7 +8,8 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts'
-import { CATEGORIES } from '../../constants/categories'
+import { ChartTooltip } from '../shared/ChartTooltip'
+import { useCategoryStore } from '../../store/categoryStore'
 import { formatCurrency } from '../../lib/dateUtils'
 import type { YearlyData } from '../../types'
 
@@ -17,22 +18,24 @@ interface YearlyLineChartProps {
 }
 
 export function YearlyLineChart({ data }: YearlyLineChartProps) {
+  const categories = useCategoryStore((s) => s.categories)
+
   const chartData = data.byMonth.map((m) => ({
     month: m.label,
     ...Object.fromEntries(
-      CATEGORIES.filter((c) => c.id !== 'income').map((c) => [c.id, m.byCategory[c.id] || 0])
+      categories.filter((c) => c.id !== 'income').map((c) => [c.id, m.byCategory[c.id] || 0])
     ),
   }))
 
   // Only show categories that have at least one non-zero month
-  const activeCategories = CATEGORIES.filter(
+  const activeCategories = categories.filter(
     (c) => c.id !== 'income' && data.byCategory[c.id] > 0
   )
 
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" strokeOpacity={0.4} />
+        <CartesianGrid horizontal vertical={false} strokeOpacity={0.1} />
         <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
         <YAxis
           tick={{ fontSize: 11, fill: '#94a3b8' }}
@@ -41,23 +44,13 @@ export function YearlyLineChart({ data }: YearlyLineChartProps) {
           tickFormatter={(v) => `$${v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v}`}
         />
         <Tooltip
-          formatter={(value: number, name: string) => {
-            const cat = CATEGORIES.find((c) => c.id === name)
-            return [formatCurrency(value), cat?.label || name]
-          }}
-          contentStyle={{
-            backgroundColor: '#1e293b',
-            border: 'none',
-            borderRadius: '8px',
-            color: '#f1f5f9',
-            fontSize: '13px',
-          }}
+          content={<ChartTooltip formatter={(v) => formatCurrency(v)} />}
         />
         <Legend
           iconType="circle"
           iconSize={8}
           formatter={(value) => {
-            const cat = CATEGORIES.find((c) => c.id === value)
+            const cat = categories.find((c) => c.id === value)
             return <span style={{ fontSize: 12, color: '#94a3b8' }}>{cat?.label || value}</span>
           }}
         />
@@ -70,6 +63,7 @@ export function YearlyLineChart({ data }: YearlyLineChartProps) {
             strokeWidth={2}
             dot={false}
             activeDot={{ r: 4 }}
+            animationDuration={800}
           />
         ))}
       </LineChart>

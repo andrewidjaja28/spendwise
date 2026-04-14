@@ -70,18 +70,18 @@ export function ShareModal() {
     <Modal open={showShareModal} onClose={handleClose} title="Share Spending Report">
       <div className="space-y-5">
         {/* Info banner */}
-        <div className="flex items-start gap-3 p-3.5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
-          <Eye size={16} className="text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
-          <div className="text-sm text-blue-700 dark:text-blue-300">
+        <div className="flex items-start gap-3 p-3.5 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl">
+          <Eye size={16} className="text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0" />
+          <div className="text-sm text-emerald-700 dark:text-emerald-300">
             <p className="font-medium mb-1">Read-only access</p>
-            <p className="text-blue-600 dark:text-blue-400">
+            <p className="text-emerald-600 dark:text-emerald-400">
               Anyone with the link can view your dashboard, charts, and transactions. They cannot edit or add anything.
             </p>
           </div>
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-600 dark:text-red-400">
+          <div className="flex items-center gap-2 p-3 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 rounded-xl text-sm text-rose-600 dark:text-rose-400">
             <AlertCircle size={16} />
             {error}
           </div>
@@ -134,7 +134,7 @@ export function ShareModal() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleEmailSend()}
-                  className="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
                 <Button onClick={handleEmailSend} disabled={!email.trim()}>
                   <Send size={14} />

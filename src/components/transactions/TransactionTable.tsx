@@ -1,9 +1,10 @@
-import { useState } from 'react'
-import { Pencil, ChevronUp, ChevronDown, Trash2, CheckSquare } from 'lucide-react'
+import { useState, useMemo, useEffect, useRef } from 'react'
+import { Pencil, ChevronUp, ChevronDown, Trash2, CheckSquare, Search, X } from 'lucide-react'
 import { CategoryBadge } from './CategoryBadge'
 import { useUiStore } from '../../store/uiStore'
 import { useTransactionStore } from '../../store/transactionStore'
 import { formatCurrency } from '../../lib/dateUtils'
+import { CATEGORY_MAP } from '../../constants/categories'
 import type { Transaction } from '../../types'
 
 type SortKey = 'date' | 'amount' | 'description' | 'category'
@@ -25,8 +26,31 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [confirmBulkDelete, setConfirmBulkDelete] = useState(false)
   const [selectMode, setSelectMode] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState('')
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>()
 
-  const sorted = [...transactions].sort((a, b) => {
+  useEffect(() => {
+    debounceRef.current = setTimeout(() => setDebouncedQuery(searchQuery), 250)
+    return () => clearTimeout(debounceRef.current)
+  }, [searchQuery])
+
+  const filtered = useMemo(() => {
+    if (!debouncedQuery.trim()) return transactions
+    const q = debouncedQuery.toLowerCase().trim()
+    return transactions.filter((tx) => {
+      const catLabel = CATEGORY_MAP[tx.category]?.label || ''
+      const tagMatch = tx.tags?.some(tag => tag.toLowerCase().includes(q)) || false
+      return (
+        tx.description.toLowerCase().includes(q) ||
+        (tx.notes && tx.notes.toLowerCase().includes(q)) ||
+        catLabel.toLowerCase().includes(q) ||
+        tagMatch
+      )
+    })
+  }, [transactions, debouncedQuery])
+
+  const sorted = [...filtered].sort((a, b) => {
     let cmp = 0
     if (sortKey === 'date') cmp = a.date.localeCompare(b.date)
     else if (sortKey === 'amount') cmp = a.amount - b.amount
@@ -92,13 +116,39 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
 
   return (
     <div className="space-y-3">
+      {/* Search input */}
+      <div className="relative">
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+        <input
+          type="text"
+          placeholder="Search transactions..."
+          value={searchQuery}
+          onChange={(e) => { setSearchQuery(e.target.value); setPage(0) }}
+          className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm pl-9 pr-8 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        />
+        {searchQuery && (
+          <button
+            onClick={() => { setSearchQuery(''); setDebouncedQuery('') }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+          >
+            <X size={14} />
+          </button>
+        )}
+      </div>
+
+      {debouncedQuery && filtered.length === 0 && (
+        <div className="text-center py-8 text-slate-400 dark:text-slate-600 text-sm">
+          No results for &lsquo;{debouncedQuery}&rsquo;
+        </div>
+      )}
+
       {/* Toolbar row */}
       <div className="flex items-center justify-between">
         {/* Left: bulk actions (only in select mode) */}
         <div className="flex items-center gap-3">
           {selectMode && selected.size > 0 && (
             <>
-              <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+              <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
                 {selected.size} selected
               </span>
               <button onClick={clearSelection} className="text-sm text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
@@ -106,18 +156,18 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
               </button>
               {confirmBulkDelete ? (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-red-600 dark:text-red-400">Delete {selected.size}?</span>
+                  <span className="text-sm text-rose-600 dark:text-rose-400">Delete {selected.size}?</span>
                   <button onClick={() => setConfirmBulkDelete(false)} className="text-sm text-slate-500 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
                     Cancel
                   </button>
-                  <button onClick={handleBulkDelete} className="text-sm text-white bg-red-500 hover:bg-red-600 px-3 py-1 rounded-lg font-medium transition-colors">
+                  <button onClick={handleBulkDelete} className="text-sm text-white bg-rose-500 hover:bg-rose-600 px-3 py-1 rounded-lg font-medium transition-colors">
                     Delete
                   </button>
                 </div>
               ) : (
                 <button
                   onClick={() => setConfirmBulkDelete(true)}
-                  className="flex items-center gap-1.5 text-sm text-red-600 dark:text-red-400 hover:text-red-700 font-medium px-3 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                  className="flex items-center gap-1.5 text-sm text-rose-600 dark:text-rose-400 hover:text-rose-700 font-medium px-3 py-1 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors"
                 >
                   <Trash2 size={14} />
                   Delete
@@ -133,7 +183,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
             onClick={() => selectMode ? exitSelectMode() : setSelectMode(true)}
             className={`flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg transition-colors ${
               selectMode
-                ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30'
+                ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/30'
                 : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
           >
@@ -155,7 +205,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                     checked={allPageSelected}
                     ref={(el) => { if (el) el.indeterminate = somePageSelected && !allPageSelected }}
                     onChange={togglePage}
-                    className="rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    className="rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                   />
                 </th>
               )}
@@ -183,7 +233,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                   onClick={() => selectMode && toggleRow(tx.id)}
                   className={`transition-colors ${selectMode ? 'cursor-pointer' : ''} ${
                     isSelected
-                      ? 'bg-blue-50 dark:bg-blue-900/10'
+                      ? 'bg-emerald-50 dark:bg-emerald-900/10'
                       : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                   }`}
                 >
@@ -193,21 +243,32 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => toggleRow(tx.id)}
-                        className="rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                        className="rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                       />
                     </td>
                   )}
-                  <td className="px-4 py-3 text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                  <td className="px-4 py-3 font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap">
                     {new Date(tx.date + 'T12:00:00').toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })}
                   </td>
-                  <td className="px-4 py-3 text-slate-800 dark:text-slate-100 max-w-xs truncate">
-                    {tx.description}
-                    {tx.notes && <span className="ml-2 text-xs text-slate-400">{tx.notes}</span>}
+                  <td className="px-4 py-3 text-slate-800 dark:text-slate-100 max-w-xs">
+                    <div className="truncate">
+                      {tx.description}
+                      {tx.notes && <span className="ml-2 text-xs text-slate-400">{tx.notes}</span>}
+                    </div>
+                    {tx.tags && tx.tags.length > 0 && (
+                      <div className="flex gap-1 mt-0.5">
+                        {tx.tags.map(tag => (
+                          <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     <CategoryBadge category={tx.category} />
                   </td>
-                  <td className={`px-4 py-3 text-right font-medium tabular-nums whitespace-nowrap ${
+                  <td className={`px-4 py-3 text-right font-mono font-medium tabular-nums whitespace-nowrap ${
                     tx.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-slate-800 dark:text-slate-100'
                   }`}>
                     {tx.type === 'income' ? '+' : ''}{formatCurrency(tx.amount)}
@@ -238,7 +299,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
               checked={allPageSelected}
               ref={(el) => { if (el) el.indeterminate = somePageSelected && !allPageSelected }}
               onChange={togglePage}
-              className="rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
+              className="rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
             />
             <span className="text-xs text-slate-500 dark:text-slate-400">Select all</span>
           </div>
@@ -251,7 +312,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
               onClick={() => selectMode && toggleRow(tx.id)}
               className={`rounded-xl border px-4 py-3 transition-colors ${selectMode ? 'cursor-pointer' : ''} ${
                 isSelected
-                  ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/10'
+                  ? 'border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/10'
                   : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'
               }`}
             >
@@ -263,21 +324,30 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                       checked={isSelected}
                       onChange={() => toggleRow(tx.id)}
                       onClick={(e) => e.stopPropagation()}
-                      className="rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 cursor-pointer mt-0.5 shrink-0"
+                      className="rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500 cursor-pointer mt-0.5 shrink-0"
                     />
                   )}
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">
                       {tx.description}
                     </p>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                    <p className="text-xs font-mono text-slate-400 dark:text-slate-500 mt-0.5">
                       {new Date(tx.date + 'T12:00:00').toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </p>
+                    {tx.tags && tx.tags.length > 0 && (
+                      <div className="flex gap-1 mt-0.5">
+                        {tx.tags.map(tag => (
+                          <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <div className="text-right">
-                    <p className={`text-sm font-semibold tabular-nums ${
+                    <p className={`text-sm font-mono font-semibold tabular-nums ${
                       tx.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-slate-800 dark:text-slate-100'
                     }`}>
                       {tx.type === 'income' ? '+' : ''}{formatCurrency(tx.amount)}

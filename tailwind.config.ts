@@ -6,6 +6,18 @@ export default {
   theme: {
     extend: {
       colors: {
+        accent: {
+          DEFAULT: '#34d399',
+          light: '#6ee7b7',
+          dark: '#059669',
+        },
+        vault: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          800: '#12121a',
+          900: '#0a0a0f',
+          950: '#050508',
+        },
         // Category colors
         'cat-food': '#f97316',
         'cat-groceries': '#84cc16',

@@ -1,5 +1,6 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts'
-import { CATEGORIES } from '../../constants/categories'
+import { ChartTooltip } from '../shared/ChartTooltip'
+import { useCategoryStore } from '../../store/categoryStore'
 import { formatCurrency } from '../../lib/dateUtils'
 import type { MonthlyData } from '../../types'
 
@@ -8,7 +9,9 @@ interface CategoryPieChartProps {
 }
 
 export function CategoryPieChart({ data }: CategoryPieChartProps) {
-  const chartData = CATEGORIES
+  const categories = useCategoryStore((s) => s.categories)
+
+  const chartData = categories
     .filter((c) => c.id !== 'income' && data.byCategory[c.id] > 0)
     .map((c) => ({ name: c.label, value: data.byCategory[c.id], color: c.color }))
     .sort((a, b) => b.value - a.value)
@@ -24,24 +27,39 @@ export function CategoryPieChart({ data }: CategoryPieChartProps) {
           data={chartData}
           cx="50%"
           cy="50%"
-          innerRadius={55}
+          innerRadius={70}
           outerRadius={90}
           paddingAngle={2}
           dataKey="value"
+          animationDuration={800}
         >
           {chartData.map((entry, i) => (
             <Cell key={i} fill={entry.color} />
           ))}
         </Pie>
+        {/* Center label */}
+        <text
+          x="50%"
+          y="48%"
+          textAnchor="middle"
+          dominantBaseline="central"
+          className="fill-slate-500 dark:fill-slate-400"
+          style={{ fontSize: 11 }}
+        >
+          Total
+        </text>
+        <text
+          x="50%"
+          y="56%"
+          textAnchor="middle"
+          dominantBaseline="central"
+          className="fill-slate-900 dark:fill-white"
+          style={{ fontSize: 14, fontWeight: 700, fontFamily: 'ui-monospace, monospace' }}
+        >
+          {formatCurrency(data.total)}
+        </text>
         <Tooltip
-          formatter={(value: number) => [formatCurrency(value), 'Spent']}
-          contentStyle={{
-            backgroundColor: '#1e293b',
-            border: 'none',
-            borderRadius: '8px',
-            color: '#f1f5f9',
-            fontSize: '13px',
-          }}
+          content={<ChartTooltip formatter={(v) => formatCurrency(v)} />}
         />
         <Legend
           iconType="circle"

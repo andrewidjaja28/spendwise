@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'react'
+import { Repeat } from 'lucide-react'
 import { Modal } from '../shared/Modal'
 import { Button } from '../shared/Button'
-import { CATEGORIES } from '../../constants/categories'
+import { TagInput } from '../shared/TagInput'
+import { useCategoryStore } from '../../store/categoryStore'
 import { useTransactionStore } from '../../store/transactionStore'
 import { useUiStore } from '../../store/uiStore'
+import { useToastStore } from '../../store/toastStore'
 import type { CategoryId } from '../../types'
 
 export function EditTransactionModal() {
   const { editingTransactionId, setEditingTransactionId } = useUiStore()
   const { transactions, updateTransaction, deleteTransaction } = useTransactionStore()
+  const categories = useCategoryStore((s) => s.categories)
+  const addToast = useToastStore((s) => s.addToast)
+
+  // Collect all unique tags from existing transactions for suggestions
+  const allTags = Array.from(new Set(transactions.flatMap((t) => t.tags || [])))
 
   const tx = transactions.find((t) => t.id === editingTransactionId)
   const open = !!editingTransactionId && !!tx
@@ -19,7 +27,10 @@ export function EditTransactionModal() {
   const [category, setCategory] = useState<CategoryId>('other')
   const [description, setDescription] = useState('')
   const [notes, setNotes] = useState('')
+  const [tags, setTags] = useState<string[]>([])
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [recurrence, setRecurrence] = useState<'none' | 'weekly' | 'biweekly' | 'monthly' | 'yearly'>('none')
+  const [recurrenceEndDate, setRecurrenceEndDate] = useState('')
 
   useEffect(() => {
     if (tx) {
@@ -29,7 +40,10 @@ export function EditTransactionModal() {
       setCategory(tx.category)
       setDescription(tx.description)
       setNotes(tx.notes || '')
+      setTags(tx.tags || [])
       setConfirmDelete(false)
+      setRecurrence(tx.recurrence || 'none')
+      setRecurrenceEndDate(tx.recurrenceEndDate || '')
     }
   }, [tx])
 
@@ -40,17 +54,22 @@ export function EditTransactionModal() {
     if (!editingTransactionId) return
     updateTransaction(editingTransactionId, {
       date, amount: parseFloat(amount), type, category, description, notes: notes || undefined,
+      tags: tags.length > 0 ? tags : undefined,
+      recurrence: recurrence !== 'none' ? recurrence : undefined,
+      recurrenceEndDate: recurrence !== 'none' && recurrenceEndDate ? recurrenceEndDate : undefined,
     })
+    addToast('Transaction updated')
     close()
   }
 
   const handleDelete = () => {
     if (!editingTransactionId) return
     deleteTransaction(editingTransactionId)
+    addToast('Transaction deleted')
     close()
   }
 
-  const inputCls = 'w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
+  const inputCls = 'w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500'
   const labelCls = 'block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1'
 
   return (
@@ -61,7 +80,7 @@ export function EditTransactionModal() {
             <button key={t} type="button" onClick={() => setType(t)}
               className={`flex-1 py-2 text-sm font-medium capitalize transition-colors ${
                 type === t
-                  ? t === 'expense' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
+                  ? t === 'expense' ? 'bg-rose-500 text-white' : 'bg-green-500 text-white'
                   : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50'
               }`}>
               {t}
@@ -88,7 +107,7 @@ export function EditTransactionModal() {
         <div>
           <label className={labelCls}>Category</label>
           <select value={category} onChange={(e) => setCategory(e.target.value as CategoryId)} className={inputCls}>
-            {CATEGORIES
+            {categories
               .filter((c) => type === 'income' ? c.id === 'income' : c.id !== 'income')
               .map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
           </select>
@@ -99,9 +118,43 @@ export function EditTransactionModal() {
           <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className={`${inputCls} resize-none`} />
         </div>
 
+        <div>
+          <label className={labelCls}>Tags <span className="text-slate-400 font-normal">(optional)</span></label>
+          <TagInput tags={tags} onChange={setTags} suggestions={allTags} />
+        </div>
+
+        {/* Recurrence */}
+        <div>
+          <label className={labelCls}>
+            <span className="flex items-center gap-1.5"><Repeat size={14} /> Repeat</span>
+          </label>
+          <select
+            value={recurrence}
+            onChange={(e) => setRecurrence(e.target.value as typeof recurrence)}
+            className={inputCls}
+          >
+            <option value="none">Does not repeat</option>
+            <option value="weekly">Weekly</option>
+            <option value="biweekly">Bi-weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+          {recurrence !== 'none' && (
+            <div className="mt-2">
+              <label className="text-xs text-slate-400">End date (optional)</label>
+              <input
+                type="date"
+                value={recurrenceEndDate}
+                onChange={(e) => setRecurrenceEndDate(e.target.value)}
+                className={inputCls}
+              />
+            </div>
+          )}
+        </div>
+
         {confirmDelete ? (
-          <div className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
-            <p className="text-sm text-red-700 dark:text-red-300 mb-3">Are you sure you want to delete this transaction?</p>
+          <div className="rounded-lg bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 p-4">
+            <p className="text-sm text-rose-700 dark:text-rose-300 mb-3">Are you sure you want to delete this transaction?</p>
             <div className="flex gap-2">
               <Button type="button" variant="secondary" size="sm" onClick={() => setConfirmDelete(false)}>Cancel</Button>
               <Button type="button" variant="danger" size="sm" onClick={handleDelete}>Delete</Button>

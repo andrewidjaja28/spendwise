@@ -13,12 +13,19 @@ interface UiStore {
   setShowSettingsModal: (v: boolean) => void
   showShareModal: boolean
   setShowShareModal: (v: boolean) => void
+  showBudgetModal: boolean
+  setShowBudgetModal: (v: boolean) => void
+  showCategoryManager: boolean
+  setShowCategoryManager: (v: boolean) => void
   // Read-only mode (for shared links)
   isReadOnly: boolean
   setReadOnly: (v: boolean) => void
   // Dark mode
   isDark: boolean
   toggleDark: () => void
+  // Onboarding
+  hasSeenOnboarding: boolean
+  setHasSeenOnboarding: (v: boolean) => void
 }
 
 function getInitialDark(): boolean {
@@ -45,6 +52,10 @@ export const useUiStore = create<UiStore>()(
       setShowSettingsModal: (v) => set({ showSettingsModal: v }),
       showShareModal: false,
       setShowShareModal: (v) => set({ showShareModal: v }),
+      showBudgetModal: false,
+      setShowBudgetModal: (v) => set({ showBudgetModal: v }),
+      showCategoryManager: false,
+      setShowCategoryManager: (v) => set({ showCategoryManager: v }),
       isReadOnly: false,
       setReadOnly: (v) => set({ isReadOnly: v }),
       isDark: getInitialDark(),
@@ -55,10 +66,12 @@ export const useUiStore = create<UiStore>()(
           else document.documentElement.classList.remove('dark')
           return { isDark: next }
         }),
+      hasSeenOnboarding: false,
+      setHasSeenOnboarding: (v) => set({ hasSeenOnboarding: v }),
     }),
     {
       name: 'spending-tracker-ui',
-      partialize: (state) => ({ isDark: state.isDark }),
+      partialize: (state) => ({ isDark: state.isDark, hasSeenOnboarding: state.hasSeenOnboarding }),
     }
   )
 )

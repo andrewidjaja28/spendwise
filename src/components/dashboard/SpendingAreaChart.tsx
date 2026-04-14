@@ -7,6 +7,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts'
+import { ChartTooltip } from '../shared/ChartTooltip'
 import { formatCurrency } from '../../lib/dateUtils'
 import type { MonthlyData } from '../../types'
 
@@ -22,11 +23,11 @@ export function SpendingAreaChart({ months }: SpendingAreaChartProps) {
       <AreaChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
         <defs>
           <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+            <stop offset="5%" stopColor="#34d399" stopOpacity={0.3} />
+            <stop offset="95%" stopColor="#34d399" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" strokeOpacity={0.4} />
+        <CartesianGrid horizontal vertical={false} strokeOpacity={0.1} />
         <XAxis
           dataKey="label"
           tick={{ fontSize: 11, fill: '#94a3b8' }}
@@ -40,23 +41,17 @@ export function SpendingAreaChart({ months }: SpendingAreaChartProps) {
           tickFormatter={(v) => `$${v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v}`}
         />
         <Tooltip
-          formatter={(value: number) => [formatCurrency(value), 'Spent']}
-          contentStyle={{
-            backgroundColor: '#1e293b',
-            border: 'none',
-            borderRadius: '8px',
-            color: '#f1f5f9',
-            fontSize: '13px',
-          }}
+          content={<ChartTooltip formatter={(v) => formatCurrency(v)} />}
         />
         <Area
           type="monotone"
           dataKey="total"
-          stroke="#3b82f6"
+          stroke="#34d399"
           strokeWidth={2.5}
           fill="url(#areaGradient)"
           dot={false}
-          activeDot={{ r: 5, fill: '#3b82f6' }}
+          activeDot={{ r: 5, fill: '#34d399' }}
+          animationDuration={800}
         />
       </AreaChart>
     </ResponsiveContainer>

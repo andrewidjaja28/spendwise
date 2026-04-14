@@ -1,14 +1,23 @@
 import { useState } from 'react'
+import { Repeat } from 'lucide-react'
 import { Modal } from '../shared/Modal'
 import { Button } from '../shared/Button'
-import { CATEGORIES } from '../../constants/categories'
+import { TagInput } from '../shared/TagInput'
+import { useCategoryStore } from '../../store/categoryStore'
 import { useTransactionStore } from '../../store/transactionStore'
 import { useUiStore } from '../../store/uiStore'
+import { useToastStore } from '../../store/toastStore'
 import type { CategoryId } from '../../types'
 
 export function AddTransactionModal() {
   const { showAddModal, setShowAddModal } = useUiStore()
   const addTransaction = useTransactionStore((s) => s.addTransaction)
+  const transactions = useTransactionStore((s) => s.transactions)
+  const categories = useCategoryStore((s) => s.categories)
+  const addToast = useToastStore((s) => s.addToast)
+
+  // Collect all unique tags from existing transactions for suggestions
+  const allTags = Array.from(new Set(transactions.flatMap((t) => t.tags || [])))
 
   const today = new Date().toISOString().slice(0, 10)
   const [date, setDate] = useState(today)
@@ -17,7 +26,10 @@ export function AddTransactionModal() {
   const [category, setCategory] = useState<CategoryId>('food_dining')
   const [description, setDescription] = useState('')
   const [notes, setNotes] = useState('')
+  const [tags, setTags] = useState<string[]>([])
   const [error, setError] = useState('')
+  const [recurrence, setRecurrence] = useState<'none' | 'weekly' | 'biweekly' | 'monthly' | 'yearly'>('none')
+  const [recurrenceEndDate, setRecurrenceEndDate] = useState('')
 
   const reset = () => {
     setDate(today)
@@ -26,7 +38,10 @@ export function AddTransactionModal() {
     setCategory('food_dining')
     setDescription('')
     setNotes('')
+    setTags([])
     setError('')
+    setRecurrence('none')
+    setRecurrenceEndDate('')
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -40,12 +55,19 @@ export function AddTransactionModal() {
       setError('Please enter a description.')
       return
     }
-    addTransaction({ date, amount: amt, type, category, description: description.trim(), notes: notes || undefined, source: 'manual' })
+    addTransaction({
+      date, amount: amt, type, category, description: description.trim(), notes: notes || undefined,
+      tags: tags.length > 0 ? tags : undefined,
+      source: 'manual',
+      recurrence: recurrence !== 'none' ? recurrence : undefined,
+      recurrenceEndDate: recurrence !== 'none' && recurrenceEndDate ? recurrenceEndDate : undefined,
+    })
+    addToast('Transaction added')
     reset()
     setShowAddModal(false)
   }
 
-  const inputCls = 'w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
+  const inputCls = 'w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500'
   const labelCls = 'block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1'
 
   return (
@@ -61,7 +83,7 @@ export function AddTransactionModal() {
               className={`flex-1 py-2 text-sm font-medium capitalize transition-colors ${
                 type === t
                   ? t === 'expense'
-                    ? 'bg-red-500 text-white'
+                    ? 'bg-rose-500 text-white'
                     : 'bg-green-500 text-white'
                   : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
               }`}
@@ -103,7 +125,7 @@ export function AddTransactionModal() {
             onChange={(e) => setCategory(e.target.value as CategoryId)}
             className={inputCls}
           >
-            {CATEGORIES
+            {categories
               .filter((c) => type === 'income' ? c.id === 'income' : c.id !== 'income')
               .map((c) => (
                 <option key={c.id} value={c.id}>{c.label}</option>
@@ -122,7 +144,41 @@ export function AddTransactionModal() {
           />
         </div>
 
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        <div>
+          <label className={labelCls}>Tags <span className="text-slate-400 font-normal">(optional)</span></label>
+          <TagInput tags={tags} onChange={setTags} suggestions={allTags} />
+        </div>
+
+        {/* Recurrence */}
+        <div>
+          <label className={labelCls}>
+            <span className="flex items-center gap-1.5"><Repeat size={14} /> Repeat</span>
+          </label>
+          <select
+            value={recurrence}
+            onChange={(e) => setRecurrence(e.target.value as typeof recurrence)}
+            className={inputCls}
+          >
+            <option value="none">Does not repeat</option>
+            <option value="weekly">Weekly</option>
+            <option value="biweekly">Bi-weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+          {recurrence !== 'none' && (
+            <div className="mt-2">
+              <label className="text-xs text-slate-400">End date (optional)</label>
+              <input
+                type="date"
+                value={recurrenceEndDate}
+                onChange={(e) => setRecurrenceEndDate(e.target.value)}
+                className={inputCls}
+              />
+            </div>
+          )}
+        </div>
+
+        {error && <p className="text-sm text-rose-500">{error}</p>}
 
         <div className="flex gap-3 pt-1">
           <Button type="button" variant="secondary" className="flex-1" onClick={() => { reset(); setShowAddModal(false) }}>

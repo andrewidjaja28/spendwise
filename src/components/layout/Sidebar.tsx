@@ -41,7 +41,7 @@ export function Sidebar() {
               onClick={() => setActiveView(id)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                 activeView === id
-                  ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                  ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
                   : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
               }`}
             >
@@ -87,12 +87,13 @@ export function Sidebar() {
           <button
             key={id}
             onClick={() => setActiveView(id)}
-            className={`flex-1 flex flex-col items-center gap-1 py-3 text-xs font-medium transition-colors ${
+            className={`relative flex-1 flex flex-col items-center gap-1 py-3 text-xs font-medium transition-colors ${
               activeView === id
-                ? 'text-blue-600 dark:text-blue-400'
+                ? 'text-emerald-600 dark:text-emerald-400'
                 : 'text-slate-500 dark:text-slate-400'
             }`}
           >
+            {activeView === id && <span className="absolute -top-0.5 w-4 h-1 rounded-full bg-emerald-500" />}
             <Icon size={20} />
             {label}
           </button>

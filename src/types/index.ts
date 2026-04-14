@@ -1,18 +1,4 @@
-export type CategoryId =
-  | 'food_dining'
-  | 'groceries'
-  | 'transport'
-  | 'housing'
-  | 'entertainment'
-  | 'health'
-  | 'shopping'
-  | 'utilities'
-  | 'travel'
-  | 'subscriptions'
-  | 'savings'
-  | 'investment'
-  | 'income'
-  | 'other'
+export type CategoryId = string
 
 export interface Transaction {
   id: string
@@ -24,6 +10,9 @@ export interface Transaction {
   notes?: string
   source: 'manual' | 'csv' | 'receipt'
   importBatchId?: string
+  recurrence?: 'none' | 'weekly' | 'biweekly' | 'monthly' | 'yearly'
+  recurrenceEndDate?: string
+  tags?: string[]
   createdAt: string
 }
 
@@ -34,6 +23,15 @@ export interface Category {
   tailwindBg: string     // tailwind bg class
   tailwindText: string   // tailwind text class
   icon: string           // lucide icon name
+}
+
+export interface CategoryDefinition {
+  id: string
+  label: string
+  color: string
+  tailwindBg: string
+  tailwindText: string
+  icon: string
 }
 
 export type ViewId = 'dashboard' | 'monthly' | 'yearly' | 'upload' | 'settings'

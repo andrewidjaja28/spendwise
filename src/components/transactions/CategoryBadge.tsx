@@ -1,4 +1,4 @@
-import { CATEGORY_MAP } from '../../constants/categories'
+import { useCategoryStore } from '../../store/categoryStore'
 import type { CategoryId } from '../../types'
 
 interface CategoryBadgeProps {
@@ -7,8 +7,17 @@ interface CategoryBadgeProps {
 }
 
 export function CategoryBadge({ category, size = 'sm' }: CategoryBadgeProps) {
-  const cat = CATEGORY_MAP[category]
+  const categories = useCategoryStore((s) => s.categories)
+  const cat = categories.find((c) => c.id === category)
   const padding = size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-3 py-1 text-sm'
+
+  if (!cat) {
+    return (
+      <span className={`inline-flex items-center rounded-full font-medium ${padding} bg-slate-100 dark:bg-slate-800 text-slate-500`}>
+        {category}
+      </span>
+    )
+  }
 
   return (
     <span

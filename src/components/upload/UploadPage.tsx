@@ -80,8 +80,8 @@ export function UploadPage() {
     <div
       className={`border-2 border-dashed rounded-2xl p-10 text-center transition-colors cursor-pointer ${
         state.status === 'parsing'
-          ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/10'
-          : 'border-slate-300 dark:border-slate-700 hover:border-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+          ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/10'
+          : 'border-slate-300 dark:border-slate-700 hover:border-emerald-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
       }`}
       onDragOver={(e) => e.preventDefault()}
       onDrop={(e) => {
@@ -101,7 +101,7 @@ export function UploadPage() {
 
       {state.status === 'parsing' ? (
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
           <p className="text-sm text-slate-600 dark:text-slate-400">{parsing}</p>
         </div>
       ) : state.status === 'done' ? (
@@ -112,8 +112,8 @@ export function UploadPage() {
         </div>
       ) : state.status === 'error' ? (
         <div className="flex flex-col items-center gap-3">
-          <AlertCircle className="text-red-500" size={32} />
-          <p className="text-sm text-red-600 dark:text-red-400 max-w-xs">{state.error}</p>
+          <AlertCircle className="text-rose-500" size={32} />
+          <p className="text-sm text-rose-600 dark:text-rose-400 max-w-xs">{state.error}</p>
           <p className="text-xs text-slate-400">Click to try again</p>
         </div>
       ) : (
@@ -134,9 +134,9 @@ export function UploadPage() {
     <div className="p-6 max-w-3xl mx-auto space-y-8">
 
       {/* Auto-categorization notice */}
-      <div className="flex items-start gap-3 px-4 py-3.5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
-        <Sparkles size={16} className="text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
-        <p className="text-sm text-blue-700 dark:text-blue-300">
+      <div className="flex items-start gap-3 px-4 py-3.5 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl">
+        <Sparkles size={16} className="text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0" />
+        <p className="text-sm text-emerald-700 dark:text-emerald-300">
           <strong>Auto-categorization on:</strong> transactions are matched to categories by merchant name (Tim Hortons → Food, Loblaws → Groceries, etc.). You can correct any before importing.
         </p>
       </div>
@@ -151,8 +151,8 @@ export function UploadPage() {
           setState={setCsv}
           inputRef={csvRef}
           icon={FileText}
-          iconBg="bg-blue-100 dark:bg-blue-900/30"
-          iconColor="text-blue-600 dark:text-blue-400"
+          iconBg="bg-emerald-100 dark:bg-emerald-900/30"
+          iconColor="text-emerald-600 dark:text-emerald-400"
           label="Drop CSV here or click to browse"
           subLabel="TD, RBC, Scotia, BMO, CIBC, Tangerine, Simplii"
           accept=".csv"
