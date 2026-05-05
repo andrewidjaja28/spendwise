@@ -81,7 +81,7 @@ export function UploadPage() {
       className={`border-2 border-dashed rounded-2xl p-10 text-center transition-colors cursor-pointer ${
         state.status === 'parsing'
           ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/10'
-          : 'border-slate-300 dark:border-slate-700 hover:border-emerald-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+          : 'border-slate-300/70 dark:border-slate-700/70 hover:border-emerald-400 hover:bg-surface-muted dark:hover:bg-surface-dark-raised/50'
       }`}
       onDragOver={(e) => e.preventDefault()}
       onDrop={(e) => {
@@ -180,7 +180,7 @@ export function UploadPage() {
       </section>
 
       {/* Tips */}
-      <section className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-5 space-y-4">
+      <section className="bg-surface-muted dark:bg-surface-dark-raised/40 rounded-2xl p-5 space-y-4">
         <div>
           <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
             <Upload size={15} /> CSV Export Tips

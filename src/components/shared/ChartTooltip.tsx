@@ -1,3 +1,5 @@
+import { memo } from 'react'
+
 interface ChartTooltipProps {
   active?: boolean
   payload?: Array<{ value: number; name?: string; color?: string }>
@@ -5,7 +7,7 @@ interface ChartTooltipProps {
   formatter?: (value: number) => string
 }
 
-export function ChartTooltip({ active, payload, label, formatter }: ChartTooltipProps) {
+export const ChartTooltip = memo(function ChartTooltip({ active, payload, label, formatter }: ChartTooltipProps) {
   if (!active || !payload?.length) return null
   const format = formatter || ((v: number) => v.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' }))
   return (
@@ -20,4 +22,4 @@ export function ChartTooltip({ active, payload, label, formatter }: ChartTooltip
       ))}
     </div>
   )
-}
+})

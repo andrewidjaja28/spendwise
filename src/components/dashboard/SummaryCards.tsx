@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { TrendingUp, TrendingDown, DollarSign, Tag } from 'lucide-react'
 import { formatCurrency } from '../../lib/dateUtils'
 import { CATEGORY_MAP } from '../../constants/categories'
@@ -20,20 +21,24 @@ export function SummaryCards({ current, previous }: SummaryCardsProps) {
   const dailyAvg = current.total / daysInMonth
 
   // Top expense category
-  const topCatId = Object.entries(current.byCategory)
-    .filter(([id]) => id !== 'income')
-    .sort(([, a], [, b]) => b - a)[0]?.[0] as CategoryId | undefined
-  const topCat = topCatId ? CATEGORY_MAP[topCatId] : null
-  const topCatAmount = topCatId ? current.byCategory[topCatId] : 0
+  const { topCat, topCatAmount } = useMemo(() => {
+    const topCatId = Object.entries(current.byCategory)
+      .filter(([id]) => id !== 'income')
+      .sort(([, a], [, b]) => b - a)[0]?.[0] as CategoryId | undefined
+    return {
+      topCat: topCatId ? CATEGORY_MAP[topCatId] : null,
+      topCatAmount: topCatId ? current.byCategory[topCatId] : 0,
+    }
+  }, [current.byCategory])
 
   // MoM change
-  const momChange = previous && previous.total > 0
+  const momChange = useMemo(() => previous && previous.total > 0
     ? ((current.total - previous.total) / previous.total) * 100
-    : null
+    : null, [current.total, previous])
 
-  const income = current.transactions
+  const income = useMemo(() => current.transactions
     .filter((t) => t.type === 'income')
-    .reduce((s, t) => s + t.amount, 0)
+    .reduce((s, t) => s + t.amount, 0), [current.transactions])
 
   const budgets = useBudgetStore((s) => s.budgets)
   const totalBudget = Object.values(budgets).reduce((s, v) => s + v, 0)
@@ -85,10 +90,26 @@ export function SummaryCards({ current, previous }: SummaryCardsProps) {
     },
   ]
 
+  const getCardBg = (title: string) => {
+    if (title === 'Total Expenses') return 'bg-emerald-50/50 dark:bg-emerald-900/10'
+    if (title === 'Income') return 'bg-green-50/50 dark:bg-green-900/10'
+    return 'bg-surface dark:bg-surface-dark-raised'
+  }
+
+  const getCardHover = (title: string) => {
+    if (title === 'Total Expenses' || title === 'Income') return 'hover:-translate-y-0.5 hover:shadow-lg'
+    return ''
+  }
+
+  const getValueSize = (title: string) => {
+    if (title === 'Total Expenses' || title === 'Income') return 'text-2xl md:text-3xl'
+    return 'text-base'
+  }
+
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {cards.map((card) => (
-        <div key={card.title} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
+        <div key={card.title} className={`${getCardBg(card.title)} rounded-2xl border border-slate-200/70 dark:border-slate-800/70 p-5 ${getCardHover(card.title)} transition-all duration-200`}>
           <div className="flex items-start justify-between mb-3">
             <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">{card.title}</p>
             <div
@@ -98,7 +119,7 @@ export function SummaryCards({ current, previous }: SummaryCardsProps) {
               <card.icon size={16} className={card.iconColor} style={card.iconStyle} />
             </div>
           </div>
-          <p className={`${card.title === 'Total Expenses' || card.title === 'Income' ? 'text-2xl md:text-3xl' : 'text-xl'} font-mono font-bold text-slate-900 dark:text-white leading-tight`}>{card.value}</p>
+          <p className={`${getValueSize(card.title)} font-mono font-bold text-slate-900 dark:text-white leading-tight`}>{card.value}</p>
           <p className={`text-xs font-mono mt-1 ${
             card.trend === 'up' ? 'text-rose-500' : card.trend === 'down' ? 'text-green-500' : 'text-slate-400 dark:text-slate-500'
           }`}>

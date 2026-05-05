@@ -1,12 +1,5 @@
-import * as pdfjsLib from 'pdfjs-dist'
 import type { Transaction } from '../types'
 import { autoCategory } from './autoCategory'
-
-// Point the worker at the bundled version
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.mjs',
-  import.meta.url
-).toString()
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -50,6 +43,12 @@ function isAmountLike(s: string): boolean {
 export async function parsePdf(
   file: File
 ): Promise<Omit<Transaction, 'id' | 'createdAt'>[]> {
+  const pdfjsLib = await import('pdfjs-dist')
+  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+    'pdfjs-dist/build/pdf.worker.mjs',
+    import.meta.url
+  ).toString()
+
   const arrayBuffer = await file.arrayBuffer()
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
 
