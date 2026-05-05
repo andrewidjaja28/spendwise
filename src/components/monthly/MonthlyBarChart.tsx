@@ -11,6 +11,7 @@ import {
 import { ChartTooltip } from '../shared/ChartTooltip'
 import { useCategoryStore } from '../../store/categoryStore'
 import { formatCurrency } from '../../lib/dateUtils'
+import { CHART_COLORS } from '../../lib/chartConfig'
 import type { MonthlyData } from '../../types'
 
 interface MonthlyBarChartProps {
@@ -37,13 +38,13 @@ export function MonthlyBarChart({ data, onCategoryClick, activeCategory }: Month
         <CartesianGrid horizontal vertical={false} strokeOpacity={0.1} />
         <XAxis
           dataKey="name"
-          tick={{ fontSize: 12, fill: '#94a3b8' }}
+          tick={{ fontSize: 12, fill: CHART_COLORS.tickText }}
           angle={-35}
           textAnchor="end"
           interval={0}
         />
         <YAxis
-          tick={{ fontSize: 12, fill: '#94a3b8' }}
+          tick={{ fontSize: 12, fill: CHART_COLORS.tickText }}
           tickFormatter={(v) => `$${(v / 1000).toFixed(v >= 1000 ? 1 : 0)}${v >= 1000 ? 'k' : ''}`}
         />
         <Tooltip

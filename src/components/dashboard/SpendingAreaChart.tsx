@@ -9,6 +9,7 @@ import {
 } from 'recharts'
 import { ChartTooltip } from '../shared/ChartTooltip'
 import { formatCurrency } from '../../lib/dateUtils'
+import { CHART_COLORS } from '../../lib/chartConfig'
 import type { MonthlyData } from '../../types'
 
 interface SpendingAreaChartProps {
@@ -23,19 +24,19 @@ export function SpendingAreaChart({ months }: SpendingAreaChartProps) {
       <AreaChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
         <defs>
           <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#34d399" stopOpacity={0.3} />
-            <stop offset="95%" stopColor="#34d399" stopOpacity={0} />
+            <stop offset="5%" stopColor={CHART_COLORS.accent} stopOpacity={0.3} />
+            <stop offset="95%" stopColor={CHART_COLORS.accent} stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid horizontal vertical={false} strokeOpacity={0.1} />
         <XAxis
           dataKey="label"
-          tick={{ fontSize: 11, fill: '#94a3b8' }}
+          tick={{ fontSize: 11, fill: CHART_COLORS.tickText }}
           tickLine={false}
           axisLine={false}
         />
         <YAxis
-          tick={{ fontSize: 11, fill: '#94a3b8' }}
+          tick={{ fontSize: 11, fill: CHART_COLORS.tickText }}
           tickLine={false}
           axisLine={false}
           tickFormatter={(v) => `$${v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v}`}
@@ -46,11 +47,11 @@ export function SpendingAreaChart({ months }: SpendingAreaChartProps) {
         <Area
           type="monotone"
           dataKey="total"
-          stroke="#34d399"
+          stroke={CHART_COLORS.accent}
           strokeWidth={2.5}
           fill="url(#areaGradient)"
           dot={false}
-          activeDot={{ r: 5, fill: '#34d399' }}
+          activeDot={{ r: 5, fill: CHART_COLORS.accent }}
           animationDuration={800}
         />
       </AreaChart>

@@ -50,17 +50,17 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
     })
   }, [transactions, debouncedQuery])
 
-  const sorted = [...filtered].sort((a, b) => {
+  const sorted = useMemo(() => [...filtered].sort((a, b) => {
     let cmp = 0
     if (sortKey === 'date') cmp = a.date.localeCompare(b.date)
     else if (sortKey === 'amount') cmp = a.amount - b.amount
     else if (sortKey === 'description') cmp = a.description.localeCompare(b.description)
     else if (sortKey === 'category') cmp = a.category.localeCompare(b.category)
     return sortDir === 'asc' ? cmp : -cmp
-  })
+  }), [filtered, sortKey, sortDir])
 
   const totalPages = Math.ceil(sorted.length / PAGE_SIZE)
-  const paged = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
+  const paged = useMemo(() => sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE), [sorted, page])
   const pagedIds = paged.map((t) => t.id)
   const allPageSelected = pagedIds.length > 0 && pagedIds.every((id) => selected.has(id))
   const somePageSelected = pagedIds.some((id) => selected.has(id))
@@ -104,7 +104,12 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
       sortDir === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />
     ) : null
 
-  const thCls = 'px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide cursor-pointer select-none hover:text-slate-700 dark:hover:text-slate-200'
+  const getAriaSortValue = (key: SortKey): 'ascending' | 'descending' | 'none' => {
+    if (sortKey === key) return sortDir === 'asc' ? 'ascending' : 'descending'
+    return 'none'
+  }
+
+  const thCls = 'px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide select-none'
 
   if (transactions.length === 0) {
     return (
@@ -124,12 +129,14 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
           placeholder="Search transactions..."
           value={searchQuery}
           onChange={(e) => { setSearchQuery(e.target.value); setPage(0) }}
+          aria-label="Search transactions"
           className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm pl-9 pr-8 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
         {searchQuery && (
           <button
             onClick={() => { setSearchQuery(''); setDebouncedQuery('') }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            aria-label="Clear search"
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
           >
             <X size={14} />
           </button>
@@ -205,21 +212,30 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                     checked={allPageSelected}
                     ref={(el) => { if (el) el.indeterminate = somePageSelected && !allPageSelected }}
                     onChange={togglePage}
+                    aria-label="Select all transactions"
                     className="rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                   />
                 </th>
               )}
-              <th className={thCls} onClick={() => handleSort('date')}>
-                <span className="flex items-center gap-1">Date <SortIcon k="date" /></span>
+              <th className={thCls} aria-sort={getAriaSortValue('date')}>
+                <button onClick={() => handleSort('date')} className="flex items-center gap-1 w-full cursor-pointer hover:text-slate-700 dark:hover:text-slate-200">
+                  Date <SortIcon k="date" />
+                </button>
               </th>
-              <th className={thCls} onClick={() => handleSort('description')}>
-                <span className="flex items-center gap-1">Description <SortIcon k="description" /></span>
+              <th className={thCls} aria-sort={getAriaSortValue('description')}>
+                <button onClick={() => handleSort('description')} className="flex items-center gap-1 w-full cursor-pointer hover:text-slate-700 dark:hover:text-slate-200">
+                  Description <SortIcon k="description" />
+                </button>
               </th>
-              <th className={thCls} onClick={() => handleSort('category')}>
-                <span className="flex items-center gap-1">Category <SortIcon k="category" /></span>
+              <th className={thCls} aria-sort={getAriaSortValue('category')}>
+                <button onClick={() => handleSort('category')} className="flex items-center gap-1 w-full cursor-pointer hover:text-slate-700 dark:hover:text-slate-200">
+                  Category <SortIcon k="category" />
+                </button>
               </th>
-              <th className={`${thCls} text-right`} onClick={() => handleSort('amount')}>
-                <span className="flex items-center justify-end gap-1">Amount <SortIcon k="amount" /></span>
+              <th className={`${thCls} text-right`} aria-sort={getAriaSortValue('amount')}>
+                <button onClick={() => handleSort('amount')} className="flex items-center justify-end gap-1 w-full cursor-pointer hover:text-slate-700 dark:hover:text-slate-200">
+                  Amount <SortIcon k="amount" />
+                </button>
               </th>
               {!isReadOnly && <th className="px-4 py-3 w-10" />}
             </tr>
@@ -277,6 +293,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                     <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => setEditingId(tx.id)}
+                        aria-label="Edit transaction"
                         className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                       >
                         <Pencil size={14} />
@@ -299,6 +316,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
               checked={allPageSelected}
               ref={(el) => { if (el) el.indeterminate = somePageSelected && !allPageSelected }}
               onChange={togglePage}
+              aria-label="Select all transactions"
               className="rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
             />
             <span className="text-xs text-slate-500 dark:text-slate-400">Select all</span>
@@ -357,7 +375,8 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                   {!isReadOnly && !selectMode && (
                     <button
                       onClick={(e) => { e.stopPropagation(); setEditingId(tx.id) }}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                      aria-label="Edit transaction"
+                      className="p-2.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                     >
                       <Pencil size={14} />
                     </button>
@@ -376,6 +395,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
             <button
               disabled={page === 0}
               onClick={() => setPage((p) => p - 1)}
+              aria-label="Go to previous page"
               className="px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Prev
@@ -383,6 +403,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
             <button
               disabled={page >= totalPages - 1}
               onClick={() => setPage((p) => p + 1)}
+              aria-label="Go to next page"
               className="px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Next

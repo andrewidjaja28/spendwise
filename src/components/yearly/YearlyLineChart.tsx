@@ -11,6 +11,7 @@ import {
 import { ChartTooltip } from '../shared/ChartTooltip'
 import { useCategoryStore } from '../../store/categoryStore'
 import { formatCurrency } from '../../lib/dateUtils'
+import { CHART_COLORS } from '../../lib/chartConfig'
 import type { YearlyData } from '../../types'
 
 interface YearlyLineChartProps {
@@ -36,9 +37,9 @@ export function YearlyLineChart({ data }: YearlyLineChartProps) {
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
         <CartesianGrid horizontal vertical={false} strokeOpacity={0.1} />
-        <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
+        <XAxis dataKey="month" tick={{ fontSize: 11, fill: CHART_COLORS.tickText }} tickLine={false} axisLine={false} />
         <YAxis
-          tick={{ fontSize: 11, fill: '#94a3b8' }}
+          tick={{ fontSize: 11, fill: CHART_COLORS.tickText }}
           tickLine={false}
           axisLine={false}
           tickFormatter={(v) => `$${v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v}`}
@@ -51,7 +52,7 @@ export function YearlyLineChart({ data }: YearlyLineChartProps) {
           iconSize={8}
           formatter={(value) => {
             const cat = categories.find((c) => c.id === value)
-            return <span style={{ fontSize: 12, color: '#94a3b8' }}>{cat?.label || value}</span>
+            return <span style={{ fontSize: 12, color: CHART_COLORS.tickText }}>{cat?.label || value}</span>
           }}
         />
         {activeCategories.map((c) => (

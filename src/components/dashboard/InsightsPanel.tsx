@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { TrendingUp, TrendingDown, AlertTriangle, Trophy, Zap } from 'lucide-react'
 import type { Insight } from '../../lib/insights'
 
@@ -21,7 +22,7 @@ const ICON_STYLES = {
   neutral: 'text-slate-600 dark:text-slate-400',
 }
 
-export function InsightsPanel({ insights }: { insights: Insight[] }) {
+export const InsightsPanel = memo(function InsightsPanel({ insights }: { insights: Insight[] }) {
   if (insights.length === 0) return null
 
   return (
@@ -40,4 +41,4 @@ export function InsightsPanel({ insights }: { insights: Insight[] }) {
       })}
     </div>
   )
-}
+})

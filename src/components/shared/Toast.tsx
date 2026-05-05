@@ -14,19 +14,25 @@ export function ToastContainer() {
   if (toasts.length === 0) return null
 
   return (
-    <div className="fixed top-4 right-4 z-[100] flex flex-col gap-2 max-sm:right-1/2 max-sm:translate-x-1/2 max-sm:w-[90vw]">
+    <div
+      role="status"
+      aria-live="polite"
+      className="fixed top-4 right-4 z-[100] flex flex-col gap-2 max-sm:right-1/2 max-sm:translate-x-1/2 max-sm:w-[90vw]"
+    >
       {toasts.map((toast) => {
         const { Icon, color } = iconMap[toast.type]
         return (
           <div
             key={toast.id}
+            role={toast.type === 'error' ? 'alert' : undefined}
             className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg px-4 py-3 flex items-center gap-3 animate-slide-in"
           >
             <Icon size={18} className={color} />
             <span className="text-sm text-slate-800 dark:text-slate-100 flex-1">{toast.message}</span>
             <button
               onClick={() => removeToast(toast.id)}
-              className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              aria-label="Dismiss notification"
+              className="p-2.5 sm:p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
             >
               <X size={14} />
             </button>

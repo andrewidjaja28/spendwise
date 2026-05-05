@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { MonthSelector } from './MonthSelector'
 import { MonthlyBarChart } from './MonthlyBarChart'
 import { TransactionTable } from '../transactions/TransactionTable'
@@ -19,14 +19,14 @@ export function MonthlyPage() {
   const budgets = useBudgetStore((s) => s.budgets)
   const setShowAddModal = useUiStore((s) => s.setShowAddModal)
 
-  const data = getMonthlyData(transactions, month)
-  const filtered = activeCategory
+  const data = useMemo(() => getMonthlyData(transactions, month), [transactions, month])
+  const filtered = useMemo(() => activeCategory
     ? data.transactions.filter((t) => t.category === activeCategory)
-    : data.transactions
+    : data.transactions, [data, activeCategory])
 
-  const income = data.transactions
+  const income = useMemo(() => data.transactions
     .filter((t) => t.type === 'income')
-    .reduce((s, t) => s + t.amount, 0)
+    .reduce((s, t) => s + t.amount, 0), [data])
 
   return (
     <div className="p-6 space-y-8 max-w-6xl mx-auto">

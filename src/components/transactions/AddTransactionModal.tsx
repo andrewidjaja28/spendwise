@@ -178,13 +178,13 @@ export function AddTransactionModal() {
           )}
         </div>
 
-        {error && <p className="text-sm text-rose-500">{error}</p>}
+        {error && <p id="form-error" role="alert" className="text-sm text-rose-500">{error}</p>}
 
         <div className="flex gap-3 pt-1">
           <Button type="button" variant="secondary" className="flex-1" onClick={() => { reset(); setShowAddModal(false) }}>
             Cancel
           </Button>
-          <Button type="submit" className="flex-1">
+          <Button type="submit" className="flex-1" aria-describedby={error ? 'form-error' : undefined}>
             Add Transaction
           </Button>
         </div>

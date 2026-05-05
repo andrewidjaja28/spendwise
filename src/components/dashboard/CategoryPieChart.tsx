@@ -2,6 +2,7 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recha
 import { ChartTooltip } from '../shared/ChartTooltip'
 import { useCategoryStore } from '../../store/categoryStore'
 import { formatCurrency } from '../../lib/dateUtils'
+import { CHART_COLORS } from '../../lib/chartConfig'
 import type { MonthlyData } from '../../types'
 
 interface CategoryPieChartProps {
@@ -64,7 +65,7 @@ export function CategoryPieChart({ data }: CategoryPieChartProps) {
         <Legend
           iconType="circle"
           iconSize={8}
-          formatter={(value) => <span style={{ fontSize: 12, color: '#94a3b8' }}>{value}</span>}
+          formatter={(value) => <span style={{ fontSize: 12, color: CHART_COLORS.tickText }}>{value}</span>}
         />
       </PieChart>
     </ResponsiveContainer>
