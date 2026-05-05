@@ -91,7 +91,7 @@ export function Modal({ open, onClose, title, children, maxWidth = 'max-w-lg' }:
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className={`relative z-10 w-full md:w-auto md:mx-auto ${maxWidth} md:max-h-[90vh] max-h-[85vh] flex flex-col bg-white dark:bg-slate-900 md:rounded-2xl rounded-t-2xl rounded-b-none shadow-2xl md:animate-slide-up animate-slide-up-mobile`}
+        className={`relative z-10 w-full md:w-auto md:mx-auto ${maxWidth} md:max-h-[90vh] max-h-[85vh] flex flex-col bg-surface dark:bg-surface-dark-raised md:rounded-2xl rounded-t-2xl rounded-b-none shadow-2xl md:animate-slide-up animate-slide-up-mobile`}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700 shrink-0">
           <h2 id="modal-title" className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h2>

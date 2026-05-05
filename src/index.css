@@ -9,11 +9,12 @@
   }
 
   body {
-    @apply bg-slate-50 text-slate-900 dark:text-white;
+    @apply text-slate-900 dark:text-white;
+    background-color: #f7f5f2;
   }
 
   .dark body {
-    background-color: #0a0a0f;
+    background-color: #12100d;
   }
 
   * {

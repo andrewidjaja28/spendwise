@@ -30,7 +30,7 @@ export function MonthlyPage() {
 
   return (
     <div className="p-6 space-y-8 max-w-6xl mx-auto">
-      <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 -mx-6 px-6 py-3">
+      <div className="sticky top-0 z-10 bg-surface/80 dark:bg-surface-dark/80 backdrop-blur-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 -mx-6 px-6 py-3">
         <MonthSelector month={month} onChange={(m) => { setMonth(m); setActiveCategory(null) }} />
         <div className="flex items-center gap-6">
           <div className="text-right">
@@ -56,7 +56,7 @@ export function MonthlyPage() {
         </div>
       ) : (
         <>
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+          <div className="bg-surface dark:bg-surface-dark-raised rounded-2xl border border-slate-200/70 dark:border-slate-800/70 p-6">
             <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-4">
               Spending by Category
               {activeCategory && (
@@ -68,7 +68,7 @@ export function MonthlyPage() {
 
           {/* Budget Progress */}
           {Object.keys(budgets).length > 0 && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+            <div className="bg-surface dark:bg-surface-dark-raised rounded-2xl border border-slate-200/70 dark:border-slate-800/70 p-6">
               <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-4">
                 Budget Progress
               </h2>
@@ -98,7 +98,7 @@ export function MonthlyPage() {
             </div>
           )}
 
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+          <div className="bg-surface dark:bg-surface-dark-raised rounded-2xl border border-slate-200/70 dark:border-slate-800/70 p-6">
             <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-4">
               Transactions
               {activeCategory && <span className="ml-2 text-emerald-500 font-normal normal-case">({filtered.length})</span>}

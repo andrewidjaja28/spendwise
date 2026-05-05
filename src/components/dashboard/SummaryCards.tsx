@@ -93,7 +93,7 @@ export function SummaryCards({ current, previous }: SummaryCardsProps) {
   const getCardBg = (title: string) => {
     if (title === 'Total Expenses') return 'bg-emerald-50/50 dark:bg-emerald-900/10'
     if (title === 'Income') return 'bg-green-50/50 dark:bg-green-900/10'
-    return 'bg-white dark:bg-slate-900'
+    return 'bg-surface dark:bg-surface-dark-raised'
   }
 
   const getCardHover = (title: string) => {
@@ -109,7 +109,7 @@ export function SummaryCards({ current, previous }: SummaryCardsProps) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {cards.map((card) => (
-        <div key={card.title} className={`${getCardBg(card.title)} rounded-2xl border border-slate-200 dark:border-slate-800 p-5 ${getCardHover(card.title)} transition-all duration-200`}>
+        <div key={card.title} className={`${getCardBg(card.title)} rounded-2xl border border-slate-200/70 dark:border-slate-800/70 p-5 ${getCardHover(card.title)} transition-all duration-200`}>
           <div className="flex items-start justify-between mb-3">
             <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">{card.title}</p>
             <div

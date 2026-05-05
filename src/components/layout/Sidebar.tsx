@@ -27,9 +27,9 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex flex-col w-56 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 h-screen sticky top-0">
+      <aside className="hidden md:flex flex-col w-56 shrink-0 bg-surface-muted dark:bg-surface-dark-muted border-r border-slate-200/70 dark:border-slate-800/70 h-screen sticky top-0">
         {/* Logo */}
-        <div className="flex items-center gap-2.5 px-5 py-5 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex items-center gap-2.5 px-5 py-5 border-b border-slate-200/70 dark:border-slate-800/70">
           <span className="font-mono font-bold text-xl tracking-widest text-slate-900 dark:text-white">STASH</span>
         </div>
 
@@ -52,7 +52,7 @@ export function Sidebar() {
         </nav>
 
         {/* Bottom actions */}
-        <div className="px-3 py-4 border-t border-slate-200 dark:border-slate-800 space-y-1">
+        <div className="px-3 py-4 border-t border-slate-200/70 dark:border-slate-800/70 space-y-1">
           {!isReadOnly && (
             <button
               onClick={() => setShowShareModal(true)}
@@ -85,7 +85,7 @@ export function Sidebar() {
       </aside>
 
       {/* Mobile bottom bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface dark:bg-surface-dark-raised border-t border-slate-200/70 dark:border-slate-800/70 flex">
         {visibleNavItems.map(({ id, label, icon: Icon }) => (
           <button
             key={id}

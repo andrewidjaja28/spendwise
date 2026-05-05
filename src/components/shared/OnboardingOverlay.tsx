@@ -45,7 +45,7 @@ export function OnboardingOverlay() {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-      <div className="relative z-10 w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-8 text-center">
+      <div className="relative z-10 w-full max-w-sm bg-surface dark:bg-surface-dark-raised rounded-2xl shadow-2xl p-8 text-center">
         <div className="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mx-auto mb-6">
           <Icon size={32} className="text-emerald-600 dark:text-emerald-400" />
         </div>

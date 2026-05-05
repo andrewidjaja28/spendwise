@@ -130,7 +130,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
           value={searchQuery}
           onChange={(e) => { setSearchQuery(e.target.value); setPage(0) }}
           aria-label="Search transactions"
-          className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm pl-9 pr-8 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="w-full bg-surface dark:bg-surface-dark-raised border border-slate-200/70 dark:border-slate-700/70 rounded-xl px-4 py-2 text-sm pl-9 pr-8 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
         {searchQuery && (
           <button
@@ -201,9 +201,9 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
       </div>
 
       {/* Desktop table */}
-      <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+      <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-200/70 dark:border-slate-700/70">
         <table className="w-full text-sm">
-          <thead className="bg-slate-50 dark:bg-slate-800/50">
+          <thead className="bg-surface-muted dark:bg-surface-dark-raised/50">
             <tr>
               {selectMode && (
                 <th className="px-4 py-3 w-10">
@@ -250,7 +250,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                   className={`transition-colors ${selectMode ? 'cursor-pointer' : ''} ${
                     isSelected
                       ? 'bg-emerald-50 dark:bg-emerald-900/10'
-                      : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                      : 'bg-surface dark:bg-surface-dark-raised hover:bg-surface-muted dark:hover:bg-surface-dark-raised/80'
                   }`}
                 >
                   {selectMode && (
@@ -331,7 +331,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
               className={`rounded-xl border px-4 py-3 transition-colors ${selectMode ? 'cursor-pointer' : ''} ${
                 isSelected
                   ? 'border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/10'
-                  : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'
+                  : 'border-slate-200/70 dark:border-slate-700/70 bg-surface dark:bg-surface-dark-raised'
               }`}
             >
               <div className="flex items-start justify-between gap-3">

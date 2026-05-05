@@ -11,6 +11,15 @@ export default {
           light: '#6ee7b7',
           dark: '#059669',
         },
+        // Warm-tinted surface system (replaces cold slate backgrounds)
+        surface: {
+          light: '#f7f5f2',       // warm stone body (light mode)
+          DEFAULT: '#fefdfb',     // warm white cards (light mode)
+          muted: '#f0ede8',       // recessed areas, sidebar (light mode)
+          dark: '#12100d',        // warm near-black body (dark mode)
+          'dark-raised': '#1a1714', // warm dark cards (dark mode)
+          'dark-muted': '#0e0d0b',  // dark mode sidebar
+        },
         vault: {
           50: '#f8fafc',
           100: '#f1f5f9',

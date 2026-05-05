@@ -25,7 +25,7 @@ export function ToastContainer() {
           <div
             key={toast.id}
             role={toast.type === 'error' ? 'alert' : undefined}
-            className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg px-4 py-3 flex items-center gap-3 animate-slide-in"
+            className="bg-surface dark:bg-surface-dark-raised border border-slate-200/70 dark:border-slate-700/70 rounded-xl shadow-lg px-4 py-3 flex items-center gap-3 animate-slide-in"
           >
             <Icon size={18} className={color} />
             <span className="text-sm text-slate-800 dark:text-slate-100 flex-1">{toast.message}</span>

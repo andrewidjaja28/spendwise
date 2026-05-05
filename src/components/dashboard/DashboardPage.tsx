@@ -96,7 +96,7 @@ export function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Area chart — takes 2/3 */}
-        <div className="lg:col-span-2 bg-slate-50 dark:bg-slate-800/30 rounded-2xl p-6">
+        <div className="lg:col-span-2 bg-surface-muted dark:bg-surface-dark-raised/60 rounded-2xl p-6">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-4">
             12-Month Spending
           </h2>
@@ -104,7 +104,7 @@ export function DashboardPage() {
         </div>
 
         {/* Pie chart — takes 1/3 */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5">
+        <div className="bg-surface dark:bg-surface-dark-raised rounded-2xl border border-slate-200/70 dark:border-slate-800/70 p-5">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-4">
             This Month
           </h2>
